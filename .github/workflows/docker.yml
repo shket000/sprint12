@@ -3,7 +3,7 @@ name: Docker CI/CD
 on:
   push:
     branches: [main]
-    tags: ['v*.*.*']
+    tags: ['v*.*.*']  # Фикс: перенесено под push
   pull_request:
     branches: [main]
 
@@ -36,7 +36,7 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: ${{ contains(github.event.ref, 'tags/') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +46,7 @@ jobs:
       - name: Extract Docker tag
         id: extract_tag
         run: |
-          TAG=$(echo ${{ github.ref }} | sed 's/refs\/tags\///')
+          TAG=${GITHUB_REF#refs/tags/}
           echo "DOCKER_TAG=${TAG}" >> $GITHUB_OUTPUT
           echo "Using tag: ${TAG}"
 
@@ -65,8 +65,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: |
-            shket000/parcel-app:${{ steps.extract_tag.outputs.DOCKER_TAG }}
+          tags: shket000/parcel-app:${{ steps.extract_tag.outputs.DOCKER_TAG }}
           build-args: |
             BUILDKIT_INLINE_CACHE=1
           cache-from: type=gha
