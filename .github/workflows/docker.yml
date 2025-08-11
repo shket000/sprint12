@@ -3,9 +3,9 @@ name: Docker CI/CD
 on:
   push:
     branches: [main]
+    tags: ['v*.*.*']  # Фикс: перенесено под push
   pull_request:
     branches: [main]
-  tags: ['v*.*.*']
 
 jobs:
   test:
