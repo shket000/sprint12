@@ -48,7 +48,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: shket000
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.SHKET000 }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
